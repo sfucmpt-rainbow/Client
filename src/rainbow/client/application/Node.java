@@ -1,4 +1,4 @@
-package prainbow;
+package rainbow.client.application;
 
 import rainbowpc.RainbowException;
 import rainbowpc.node.*;
