@@ -1,44 +1,35 @@
-package test;
+import java.util.Random;
+
 
 public class RandomCharacterGenerator {
 	
-	/* Generate a random character from a range.
-	 * e.g: any character from the range c-h
-	*/
-	public static char generateRandomCharacter(int min, int max)
-	{
-		int index = min + (int)(Math.random() * ((max - min) + 1));
-		return ReductionFunction.ALPHABET.charAt(index);
-	}
-	
-	// Generate a random size for the plaintext
-	public static int generateRandomLength(int min, int max)
-	{
-		int length = min + (int)(Math.random() * ((max - min) + 1));
-		return length;
-	}
+	public static String ALPHABET = "abcdefghijklmnopqrstuvwxyz";
 	
 	// Generate a random plaintext (i.e: string with random characters)
-	// The length of the string is passed as argument 
-	public static String generateRandomPlaintext(int length)
-	{
-		StringBuffer buf = new StringBuffer();
-		
-		for (int i=0; i < length; i++)
+		// The length of the string is passed as argument 
+		public static String generateRandomPlaintext(int length, int start, int end, Random rand)
 		{
-			buf.append(generateRandomCharacter(0,25));
+			StringBuffer buf = new StringBuffer();
+			int randomIndex;
+			for (int i=0; i < length; i++)
+			{
+				randomIndex = randomInteger(start, end,rand);
+				buf.append(ALPHABET.charAt(randomIndex));
+			}
+			
+			return buf.toString();
 		}
-		
-		return buf.toString();
-	}
 	
-//	public static void main (String[] args)
-//	{
-//		for (int i=0; i < 10000000; i++)
-//		{
-//			System.out.println(generateRandomPlaintext(generateRandomLength(3,10)));
-//			
-//		}
-//	}
+	public static int randomInteger(int start, int end, Random rand){
+	    if ( start > end ) {
+	      throw new IllegalArgumentException("start cannot go beyond end.");
+	    }
+	    long range = (long)end - (long)start + 1;
+	    long fraction = (long)(range * rand.nextDouble());
+	    int randomNumber =  (int)(fraction + start);    
+	    return randomNumber;
+	  }
+	
 
 }
+
