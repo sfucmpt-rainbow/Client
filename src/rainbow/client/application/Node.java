@@ -1,5 +1,7 @@
 package rainbow.client.application;
 
+import rainbow.client.worker.Worker;
+import rainbow.client.factory.WorkerFactory;
 import rainbowpc.RainbowException;
 import rainbowpc.node.*;
 import java.io.IOException;
@@ -35,14 +37,25 @@ public class Node {
 		Executor protocolExecutor = Executors.newSingleThreadExecutor();
 		protocolExecutor.execute(protocol);
 		protocol.setInterruptThread(Thread.currentThread());
-		while (true) {
-			try {
-				protocol.getMessage();
-			}
-			catch (InterruptedException e) {
-				break;
-			}
+	
+		int cores = Runtime.getRuntime().availableProcessors();
+		Thread[] workers = new Thread[cores];
+		for (int i = 0; i < cores; i++) {
+			Worker worker = WorkerFactory.getDefaultWorker(i, protocol);
+			workers[i] = new Thread(worker);
+			workers[i].start();
 		}
+
+		try {
+			for (int i = 0; i < cores; i++) {
+				workers[i].join();
+			}
+		} catch (InterruptedException e) {
+			try {
+				protocol.shutdown();
+			} catch (Exception dont_care) {}
+		}
+
 		System.exit(0);
 	}
 }
